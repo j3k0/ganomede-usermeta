@@ -23,7 +23,8 @@ USER app
 WORKDIR /home/app/code
 CMD node index.js
 
+ENV NODE_ENV=production
 ENV STATSD_HOST=
 ENV STATSD_PORT=
-ENV STATSD_PREFIX=ganomede.users.
-ENV NODE_ENV=production
+ENV STATSD_PREFIX=ganomede.usermeta.
+ENV USERMETA_VALID_KEYS=
