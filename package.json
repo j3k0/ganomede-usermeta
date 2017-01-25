@@ -1,7 +1,7 @@
 {
-  "name": "users",
-  "version": "1.4.2",
-  "api": "users/v1",
+  "name": "usermeta",
+  "version": "0.1.0",
+  "api": "usermeta/v1",
   "description": "users micro service",
   "private": true,
   "main": "index.js",
