@@ -18,6 +18,9 @@ INVALID_AUTH_TOKEN = 'invalid-token'
 INVALID_USERNAME = 'invalid'
 INVALID_KEY = 'nodata'
 
+POST_KEY = 'postdata'
+POST_VALUE = '123456'
+
 describe 'users-api', ->
 
   server = null
@@ -32,6 +35,8 @@ describe 'users-api', ->
       return "#{host}/#{PREFIX}/auth/#{token}#{path}"
     else
       return "#{host}/#{PREFIX}#{path}"
+
+  usermeta = null
 
   beforeEach (done) ->
     @timeout 10000
@@ -105,5 +110,29 @@ describe 'users-api', ->
     testGet publicEndpoint
   describe 'GET /usermeta/v1/auth/:token/:key',
     testGet protectedEndpoint
+
+  describe 'POST /usermeta/v1/auth/:token/:key', () ->
+
+    it 'rejects invalid auth tokens', (done) ->
+      superagent
+        .post protectedEndpoint INVALID_USERNAME, INVALID_AUTH_TOKEN, POST_KEY
+        .send value: POST_VALUE
+        .end (err, res) ->
+          expect(err).to.be.ok
+          expect(res.status).to.equal 401
+          done()
+      return
+
+    it 'stores user metadata\'s value', (done) ->
+      superagent
+        .post protectedEndpoint VALID_USERNAME, VALID_AUTH_TOKEN, POST_KEY
+        .send value: POST_VALUE
+        .end (err, res) ->
+          expect(err).to.be.null
+          expect(res.status).to.equal 200
+          usermeta.get VALID_USERNAME, VALID_KEY, (err, value) ->
+            expect(value).to.equal VALID_VALUE
+            done()
+      return
 
 # vim: ts=2:sw=2:et:
