@@ -1,0 +1,22 @@
+users:
+    build: .
+    dockerfile: Dockerfile.dev
+    volumes:
+     - ./src:/home/app/code/src
+     - ./tests:/home/app/code/tests
+     - ./run_tests.sh:/home/app/code/run_tests.sh
+    links:
+     - authRedis:redis_auth
+     - usermetaRedis:redis_usermeta
+    ports:
+     - "8000"
+
+authRedis:
+    image: tutum/redis:latest
+    environment:
+     - "REDIS_PASS=**None**"
+
+usermetaRedis:
+    image: tutum/redis:latest
+    environment:
+     - "REDIS_PASS=**None**"
