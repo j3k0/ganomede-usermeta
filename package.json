@@ -1,9 +1,9 @@
 {
-  "name": "REPLACE_THIS_WITH_YOUR_THING",
-  "version": "0.0.1",
+  "name": "usermeta",
+  "version": "1.0.0",
   "private": true,
-  "api": "REPLACE_THIS_WITH_YOUR_THING/v1",
-  "description": "REPLACE_THIS_WITH_YOUR_THING microservice",
+  "api": "usermeta/v1",
+  "description": "usermeta microservice",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
@@ -14,15 +14,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/REPLACE_THIS_WITH_YOUR_THING.git"
+    "url": "git+https://github.com/j3k0/ganomede-usermeta.git"
   },
   "keywords": [],
   "author": "",
   "license": "Trade Secret",
   "bugs": {
-    "url": "https://github.com/REPLACE_THIS_WITH_YOUR_THING/issues"
+    "url": "https://github.com/j3k0/ganomede-usermeta/issues"
   },
-  "homepage": "https://github.com/REPLACE_THIS_WITH_YOUR_THING#readme",
+  "homepage": "https://github.com/j3k0/ganomede-usermeta#readme",
   "devDependencies": {
     "chai": "^3.5.0",
     "eslint": "^3.8.0",
