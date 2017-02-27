@@ -1,0 +1,40 @@
+{
+  "name": "REPLACE_THIS_WITH_YOUR_THING",
+  "version": "0.0.1",
+  "private": true,
+  "api": "REPLACE_THIS_WITH_YOUR_THING/v1",
+  "description": "REPLACE_THIS_WITH_YOUR_THING microservice",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "startw": "nodemon --watch src/ --watch index.js --watch config.js --exec 'npm start'",
+    "test": "BUNYAN_LEVEL=ERROR mocha --bail --no-exit --throw-deprecation tests/helper.js 'tests/*.test.js'",
+    "testw": "nodemon --watch src/ --watch tests/ --watch config.js --exec 'npm test'",
+    "lint": "eslint src/ tests/ index.js config.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/REPLACE_THIS_WITH_YOUR_THING.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "Trade Secret",
+  "bugs": {
+    "url": "https://github.com/REPLACE_THIS_WITH_YOUR_THING/issues"
+  },
+  "homepage": "https://github.com/REPLACE_THIS_WITH_YOUR_THING#readme",
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "eslint": "^3.8.0",
+    "mocha": "^3.1.2",
+    "supertest": "^3.0.0",
+    "testdouble": "^1.11.1"
+  },
+  "dependencies": {
+    "async": "^2.1.2",
+    "bunyan": "^1.8.1",
+    "curtain-down": "^1.0.0",
+    "lodash": "^4.17.2",
+    "restify": "^4.1.1"
+  }
+}
