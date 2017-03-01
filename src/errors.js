@@ -81,6 +81,20 @@ class RequestValidationError extends GanomedeError {
   }
 }
 
+class InvalidAuthTokenError extends GanomedeError {
+  constructor () {
+    super('Invalid auth token');
+    this.statusCode = 401;
+  }
+}
+
+class InvalidCredentialsError extends GanomedeError {
+  constructor () {
+    super('Invalid credentials');
+    this.statusCode = 401;
+  }
+}
+
 const toRestError = (error) => {
   if (!error.statusCode)
     throw new Error(`Please define "statusCode" prop for ${error.constructor.name}`);
@@ -112,5 +126,7 @@ const sendHttpError = (next, err) => {
 module.exports = {
   GanomedeError,
   RequestValidationError,
+  InvalidAuthTokenError,
+  InvalidCredentialsError,
   sendHttpError
 };
