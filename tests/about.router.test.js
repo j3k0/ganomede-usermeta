@@ -1,6 +1,5 @@
 'use strict';
 
-const {expect} = require('chai');
 const supertest = require('supertest');
 const createServer = require('../src/server');
 const about = require('../src/about.router');

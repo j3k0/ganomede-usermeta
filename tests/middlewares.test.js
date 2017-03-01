@@ -50,7 +50,7 @@ describe('Middlewares', () => {
         expect(req.ganomede).to.have.property('username', 'user');
         expect(req.ganomede).to.have.property('secretMatches', true);
         done();
-      })
+      });
     });
 
     it('token is invalid', (done) => {
