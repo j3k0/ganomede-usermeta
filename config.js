@@ -39,10 +39,53 @@ const parseApiSecret = () => {
   return process.env.API_SECRET;
 };
 
+const parseMaxBytes = () => {
+  if (!process.env.hasOwnProperty('USERMETA_MAX_LENGTH'))
+    return 200;
+
+  const val = String(process.env.USERMETA_MAX_LENGTH);
+  const int = parseInt(val, 10);
+  if (String(int) !== val)
+    throw new Error('Invalid integer format on env var USERMETA_MAX_LENGTH');
+
+  return int;
+};
+
+const parseFields = (envName) => {
+  if (!process.env.hasOwnProperty(envName))
+    throw new Error(`Missing env var with keys ${envName}, provide empty string for []`);
+
+  const val = process.env[envName];
+  if (val === '')
+    return [];
+
+  return val
+    .split(',')
+    .map(key => {
+      if (key.trim() !== key)
+        throw new Error(`Invalid key ${key} inside ${envName} (whitespace)`);
+
+      if (!parseFields.validKeyRegexp.test(key))
+        throw new Error(`Invalid key ${key} inside ${envName} (regex)`);
+
+      return key;
+    });
+};
+
+parseFields.validKeyRegexp = /^[a-z0-9_]+$/i;
+
 module.exports = {
   name: pkg.name,
   logLevel: parseLogLevel(process.env.BUNYAN_LEVEL),
   secret: process.env.hasOwnProperty('API_SECRET') && parseApiSecret(),
+
+  fields: global.__ganomedeTest ? {} : {
+    public: parseFields('USERMETA_PUBLIC_KEYS'),
+    protected: parseFields('USERMETA_PROTECTED_KEYS'),
+    private: parseFields('USERMETA_PRIVATE_KEYS'),
+    internal: parseFields('USERMETA_INTERNAL_KEYS'),
+    maxBytes: parseMaxBytes() // for non-internal fields
+  },
 
   http: {
     host: process.env.HOST || '0.0.0.0',
@@ -52,3 +95,6 @@ module.exports = {
     prefix: `/${pkg.api}`
   }
 };
+
+if (!module.parent)
+  require('./src/utils').debugPrint(module.exports);
