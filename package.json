@@ -33,8 +33,10 @@
   },
   "dependencies": {
     "async": "^2.1.2",
+    "authdb": "^0.3.0",
     "bunyan": "^1.8.1",
     "curtain-down": "^1.0.0",
+    "ganomede-helpers": "^1.0.5",
     "lodash": "^4.17.2",
     "restify": "^4.1.1"
   }

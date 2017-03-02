@@ -19,12 +19,8 @@ describe('levels', () => {
     expect(parse({secretMatches: true})).to.equal(levels.public);
   });
 
-  it('protected — username', () => {
-    expect(parse({secretMatches: false, username: 'joe'})).to.equal(levels.protected);
-  });
-
   it('private — username but no secret', () => {
-    expect(parse({secretMatches: false, username: 'joe'})).to.equal(levels.protected);
+    expect(parse({secretMatches: false, username: 'joe'})).to.equal(levels.private);
   });
 
   it('internal — username and secret', () => {

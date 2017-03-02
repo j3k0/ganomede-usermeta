@@ -19,11 +19,7 @@ class Filter {
   }
 
   readable (level, keys) {
-    return keys.map(key => {
-      return this.rules.canRead(level, key)
-        ? key
-        : new InvalidCredentialsError();
-    });
+    return keys.filter(key => this.rules.canRead(level, key));
   }
 
   writable (level, key, value) {

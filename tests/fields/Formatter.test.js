@@ -30,6 +30,14 @@ describe('Formatter', () => {
         'bob:email'
       ]);
     });
+
+    it('empty usernames mean empty keys', () => {
+      expect(Formatter.toKeys([], ['x', 'y'])).to.eql([]);
+    });
+
+    it('empty metanames mean empty keys', () => {
+      expect(Formatter.toKeys(['alice', 'bob'], [])).to.eql([]);
+    });
   });
 
   describe('.toResult()', () => {

@@ -2,6 +2,7 @@
 
 const util = require('util');
 const bunyan = require('bunyan');
+const {ServiceEnv} = require('ganomede-helpers').links;
 const pkg = require('./package.json');
 
 const parseLogLevel = (envValue) => {
@@ -93,6 +94,16 @@ module.exports = {
       ? parseInt(process.env.PORT, 10)
       : 8000,
     prefix: `/${pkg.api}`
+  },
+
+  redisAuthdb: {
+    hostname: ServiceEnv.host('REDIS_AUTH', 6379),
+    port: ServiceEnv.port('REDIS_AUTH', 6379)
+  },
+
+  redisUsermeta: {
+    hostname: ServiceEnv.host('REDIS_USERMETA', 6379),
+    port: ServiceEnv.port('REDIS_USERMETA', 6379)
   }
 };
 

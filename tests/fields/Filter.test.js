@@ -16,14 +16,9 @@ describe('Filter', () => {
   const filter = new Filter({rules, maxPublicBytes: 10});
 
   describe('#readable()', () => {
-    it('turns unreadable keys into errors, leaves readbale as is', () => {
+    it('removes keys that are unreadable at that level', () => {
       const readables = filter.readable(levels.public, ['public', 'int01', 'pub01']);
-
-      expect(readables).to.eql([
-        'public',
-        new InvalidCredentialsError(),
-        'pub01'
-      ]);
+      expect(readables).to.eql(['public', 'pub01']);
     });
   });
 

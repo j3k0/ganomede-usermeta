@@ -9,7 +9,9 @@ class Db {
   // We do so in Formatter, because that way we can distinguish between
   // missing redis keys and redis key set to null.
   getKeys (keys, callback) {
-    this.redis.mget(keys, callback);
+    return (keys.length === 0)
+      ? setImmediate(callback, null, [])
+      : this.redis.mget(keys, callback);
   }
 
   setKeys (keys, values, callback) {

@@ -3,18 +3,27 @@
 const Db = require('../../src/fields/Db');
 
 describe('Db', () => {
+  describe('#getKeys()', () => {
+    it('calls mget', (done) => {
+      const redisClient = td.object(['mget']);
+      const db = new Db({redisClient});
 
-  it('#getKeys() calls mget', (done) => {
-    const redisClient = td.object(['mget']);
-    const db = new Db({redisClient});
+      td.when(redisClient.mget(['a', 'b', 'c'], td.callback))
+        .thenCallback(null, ['1', '2', null]);
 
-    td.when(redisClient.mget(['a', 'b', 'c'], td.callback))
-      .thenCallback(null, ['1', '2', null]);
+      db.getKeys(['a', 'b', 'c'], (err, values) => {
+        expect(err).to.be.null;
+        expect(values).to.eql(['1', '2', null]);
+        done();
+      });
+    });
 
-    db.getKeys(['a', 'b', 'c'], (err, values) => {
-      expect(err).to.be.null;
-      expect(values).to.eql(['1', '2', null]);
-      done();
+    it('fetching empty keys is fine', (done) => {
+      new Db({}).getKeys([], (err, values) => {
+        expect(err).to.be.null;
+        expect(values).to.eql([]);
+        done();
+      });
     });
   });
 
