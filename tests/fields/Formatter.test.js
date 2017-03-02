@@ -5,7 +5,7 @@ const Formatter = require('../../src/fields/Formatter');
 describe('Formatter', () => {
   describe('.toKeys()', () => {
     it('converts single username and single meta', () => {
-      expect(Formatter.toKeys(['alice'], ['country'])).to.eql(['alice:country']);
+      expect(Formatter.toKeys('alice', 'country')).to.eql(['alice:country']);
     });
 
     it('converts multiple usernames and single meta', () => {
