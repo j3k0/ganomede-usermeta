@@ -18,9 +18,9 @@ describe('Middlewares', () => {
     });
   });
 
-  describe('authdbAuth()', () => {
+  describe('requireAuth()', () => {
     const authdbClient = td.object(['getAccount']);
-    const mw = middlewares.authdbAuth({authdbClient, secret: '42'});
+    const mw = middlewares.requireAuth({authdbClient, secret: '42'});
 
     it('token is valid', (done) => {
       const req = {

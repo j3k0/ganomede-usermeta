@@ -17,7 +17,7 @@ const parseUsernameFromSecretToken = (secret, token) => {
     : false;
 };
 
-const authdbAuth = ({authdbClient, secret = false, paramName = 'token'} = {}) => (req, res, next) => {
+const requireAuth = ({authdbClient, secret = false, paramName = 'token'} = {}) => (req, res, next) => {
   const token = lodash.get(req, `params.${paramName}`);
   if (!token)
     return sendHttpError(next, new InvalidAuthTokenError());
@@ -45,5 +45,5 @@ const authdbAuth = ({authdbClient, secret = false, paramName = 'token'} = {}) =>
 
 module.exports = {
   requireSecret,
-  authdbAuth
+  requireAuth
 };
