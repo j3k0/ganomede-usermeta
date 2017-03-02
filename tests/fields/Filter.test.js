@@ -1,77 +1,50 @@
 'use strict';
 
-const Filter = require('../../src/fields/Filter');
+const {InvalidCredentialsError} = require('../../src/errors');
 const levels = require('../../src/fields/levels');
+const Rules = require('../../src/fields/Rules');
+const Filter = require('../../src/fields/Filter');
 
 describe('Filter', () => {
-  const filter = new Filter({
+  const rules = new Rules({
     publicKeys: ['public', 'pub01'],
     protectedKeys: ['protected', 'pro01'],
     privateKeys: ['private', 'pri01'],
     internalKeys: ['internal', 'int01']
   });
 
-  describe('new Filter()', () => {
-    it('throws on key intersection', () => {
-      const create = () => new Filter({
-        publicKeys: ['same key'],
-        protectedKeys: ['same key'],
-        privateKeys: ['different'],
-        internalKeys: ['i am unique']
-      });
+  const filter = new Filter({rules, maxPublicBytes: 10});
 
-      expect(create).to.throw(/^Intersection between different key levels/);
+  describe('#readable()', () => {
+    it('turns unreadable keys into errors, leaves readbale as is', () => {
+      const readables = filter.readable(levels.public, ['public', 'int01', 'pub01']);
+
+      expect(readables).to.eql([
+        'public',
+        new InvalidCredentialsError(),
+        'pub01'
+      ]);
     });
   });
 
-  describe('#canRead()', () => {
-    it('public can be read by any level', () => {
-      expect(filter.canRead(levels.public, 'pub01')).to.be.true;
+  describe('#writable()', () => {
+    it('returns true if level can set key to a value', () => {
+      expect(filter.writable(levels.protected, 'public', '0xdeadbeef')).to.be.true;
     });
 
-    it('protected can be read by protected and up', () => {
-      expect(filter.canRead(levels.public, 'pro01')).to.be.false;
-      expect(filter.canRead(levels.protected, 'pro01')).to.be.true;
+    it('returns error if level is not high enough to write value', () => {
+      expect(filter.writable(levels.public, 'public', '0xdeadbeef'))
+        .to.be.instanceof(InvalidCredentialsError);
     });
 
-    it('private can be read by private and up', () => {
-      expect(filter.canRead(levels.protected, 'pri01')).to.be.false;
-      expect(filter.canRead(levels.private, 'pri01')).to.be.true;
+    it('levels under internal can not write values over byte limit', () => {
+      expect(filter.writable(levels.protected, 'protected', 'too-long-of-a-stirng'))
+        .to.be.instanceof(Filter.ValueTooBigError);
     });
 
-    it('internal can be read by internal and up', () => {
-      expect(filter.canRead(levels.private, 'int01')).to.be.false;
-      expect(filter.canRead(levels.internal, 'int01')).to.be.true;
-    });
-
-    it('no one can read uknown keys', () => {
-      expect(filter.canRead(levels.internal, 'missing')).to.be.false;
-    });
-  });
-
-  describe('#canWrite()', () => {
-    it('public can be written by protected and up', () => {
-      expect(filter.canWrite(levels.public, 'pub01')).to.be.false;
-      expect(filter.canWrite(levels.protected, 'pub01')).to.be.true;
-    });
-
-    it('protected can be written by protected and up', () => {
-      expect(filter.canWrite(levels.public, 'pro01')).to.be.false;
-      expect(filter.canWrite(levels.protected, 'pro01')).to.be.true;
-    });
-
-    it('private can be written by internal and up', () => {
-      expect(filter.canWrite(levels.private, 'pri01')).to.be.false;
-      expect(filter.canWrite(levels.internal, 'pri01')).to.be.true;
-    });
-
-    it('internal can be written by internal and up', () => {
-      expect(filter.canWrite(levels.private, 'int01')).to.be.false;
-      expect(filter.canWrite(levels.internal, 'int01')).to.be.true;
-    });
-
-    it('no one can write uknown keys', () => {
-      expect(filter.canWrite(levels.internal, 'missing')).to.be.false;
+    it('internal can write values of any size', () => {
+      expect(filter.writable(levels.internal, 'protected', 'too-long-of-a-stirng'))
+        .to.be.true;
     });
   });
 });

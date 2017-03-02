@@ -1,61 +1,43 @@
 'use strict';
 
-const {debugInspect} = require('../utils');
+const {GanomedeError, InvalidCredentialsError} = require('../errors');
 const levels = require('./levels');
 
-const LEVELS = Object.keys(levels);
-const LEVEL_DOES_NOT_EXIST = NaN;
+const bytes = Buffer.byteLength;
 
-const throwOnIntersection = (...levels) => {
-  const sizes = {
-    total: levels.length,
-    unique: new Set(levels).size
-  };
-
-  if (sizes.total !== sizes.unique)
-    throw new Error(`Intersection between different key levels ${debugInspect(sizes)}`);
-};
-
-class Filter {
-  constructor ({publicKeys, protectedKeys, privateKeys, internalKeys}) {
-    this.public = new Set(publicKeys);
-    this.protected = new Set(protectedKeys);
-    this.private = new Set(privateKeys);
-    this.internal = new Set(internalKeys);
-
-    throwOnIntersection(...publicKeys, ...protectedKeys, ...privateKeys, ...internalKeys);
-  }
-
-  _levelOf (key) {
-    const levelKey = LEVELS.find(level => this[level].has(key));
-
-    return levelKey
-      ? levels[levelKey]
-      : LEVEL_DOES_NOT_EXIST;
-  }
-
-  canWrite (level, key) {
-    switch (this._levelOf(key)) {
-      case levels.public:
-      case levels.protected:
-        return level >= levels.protected;
-
-      case levels.private:
-      case levels.internal:
-        return level >= levels.internal;
-
-      default:
-        return false;
-    }
-  }
-
-  canRead (level, key) {
-    const keyLevel = this._levelOf(key);
-
-    return Number.isNaN(keyLevel)
-      ? false
-      : level >= keyLevel;
+class ValueTooBigError extends GanomedeError {
+  constructor (byteLimit) {
+    super('Value exceeds %d byte limit', byteLimit);
+    this.statusCode = 413;
   }
 }
+
+class Filter {
+  constructor ({rules, maxPublicBytes}) {
+    this.rules = rules;
+    this.maxPublicBytes = maxPublicBytes;
+  }
+
+  readable (level, keys) {
+    return keys.map(key => {
+      return this.rules.canRead(level, key)
+        ? key
+        : new InvalidCredentialsError();
+    });
+  }
+
+  writable (level, key, value) {
+    const sizeOk = (level >= levels.internal) || (bytes(value) <= this.maxPublicBytes);
+    if (!sizeOk)
+      return new ValueTooBigError(this.maxPublicBytes);
+
+    if (!this.rules.canWrite(level, key))
+      return new InvalidCredentialsError();
+
+    return true;
+  }
+}
+
+Filter.ValueTooBigError = ValueTooBigError;
 
 module.exports = Filter;
