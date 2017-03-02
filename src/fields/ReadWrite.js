@@ -26,11 +26,8 @@ class ReadWrite {
     const readables = this.filter.readable(level, metadatas);
     const keys = Formatter.toKeys(usernames, readables);
 
-    this.db.getKeys(keys, (err, values) => {
-      return err
-        ? callback(err)
-        : callback(null, Formatter.toResult(keys, values));
-    });
+    this.db.getKeys(keys, (err, values) =>
+      callback(err, Formatter.toResult(keys, values)));
   }
 
   write (level, username, metadata, value, callback) {

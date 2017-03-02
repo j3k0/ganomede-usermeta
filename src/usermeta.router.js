@@ -43,34 +43,27 @@ module.exports = ({
       : values;
   };
 
+  const parseCsvParam = (paramKey) => (req, res, next) => {
+    const values = normalizeCSV(req.params, paramKey);
+    if (values instanceof Error)
+      return sendHttpError(next, values);
+    req.ganomede[paramKey] = values;
+    next();
+  };
+
+  const readMetas = (usernamesKey) => (req, res, next) => {
+    const {accessLevel, metanames} = req.ganomede;
+    const usernames = req.ganomede[usernamesKey];
+    readWrite.read(accessLevel, usernames, metanames, (err, result) =>
+      err ? sendHttpError(next, err) : res.json(result));
+  };
+
   return (prefix, server) => {
-    server.get(`${prefix}/:usernames/:metanames`, parseLevel, (req, res, next) => {
-      const usernames = normalizeCSV(req.params, 'usernames');
-      if (usernames instanceof Error)
-        return sendHttpError(next, usernames);
+    server.get(`${prefix}/:usernames/:metanames`,
+      parseLevel, parseCsvParam('usernames'), parseCsvParam('metanames'), readMetas('usernames'));
 
-      const metanames = normalizeCSV(req.params, 'metanames');
-      if (metanames instanceof Error)
-        return sendHttpError(next, metanames);
-
-      readWrite.read(req.ganomede.accessLevel, usernames, metanames, (err, result) => {
-        return err
-          ? sendHttpError(next, err)
-          : res.json(result);
-      });
-    });
-
-    server.get(`${prefix}/auth/:token/:metanames`, requireAuth, parseLevel, (req, res, next) => {
-      const metanames = normalizeCSV(req.params, 'metanames');
-      if (metanames instanceof Error)
-        return sendHttpError(next, metanames);
-
-      readWrite.read(req.ganomede.accessLevel, req.ganomede.username, metanames, (err, result) => {
-        return err
-          ? sendHttpError(next, err)
-          : res.json(result);
-      });
-    });
+    server.get(`${prefix}/auth/:token/:metanames`,
+      requireAuth, parseLevel, parseCsvParam('metanames'), readMetas('username'));
 
     server.post(`${prefix}/auth/:token/:metaname`, requireAuth, parseLevel, (req, res, next) => {
       if (!(req.body && hasOwnProperty(req.body, 'value')))

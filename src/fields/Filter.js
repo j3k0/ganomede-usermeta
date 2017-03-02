@@ -1,5 +1,13 @@
 'use strict';
 
+//
+// Filter class decides when a metadata can be read or writen
+// based on its key and value.
+//
+// It enforce the size limit for non-internal metadata.
+// It delegates keys access-control filtering to the Rules class.
+//
+
 const {GanomedeError, InvalidCredentialsError} = require('../errors');
 const levels = require('./levels');
 

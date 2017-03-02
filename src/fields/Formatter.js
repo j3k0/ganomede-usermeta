@@ -1,5 +1,9 @@
 'use strict';
 
+//
+// Formatter class converts (usernames, metanames) to database keys, back an forth.
+//
+
 const toArray = (thing) => {
   return Array.isArray(thing)
     ? thing
@@ -22,7 +26,7 @@ class Formatter {
   }
 
   static toResult (keys, values) {
-    return keys.reduce((ref, key, index) => {
+    return keys && values && keys.reduce((ref, key, index) => {
       const value = values[index];
 
       if (value !== null) {

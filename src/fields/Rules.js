@@ -1,5 +1,15 @@
 'use strict';
 
+//
+// Rules class controls the access rights based on metadata's keys.
+//
+// It's provided with the sets of known keys for each level.
+//
+// It checks that:
+// - Key is present in one set.
+// - Caller has the required access level to read or write a metadata.
+//
+
 const {debugInspect} = require('../utils');
 const levels = require('./levels');
 
