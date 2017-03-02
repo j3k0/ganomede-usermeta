@@ -28,7 +28,7 @@ class Formatter {
       if (value !== null) {
         const [username, metaname] = key.split(':');
         ref[username] = ref[username] || {};
-        ref[username][metaname] = value;
+        ref[username][metaname] = JSON.parse(value);
       }
 
       return ref;

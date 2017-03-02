@@ -46,7 +46,7 @@ describe('Formatter', () => {
         'alice@example.com',
         'Russia',
         'bob@example.com'
-      ];
+      ].map(val => JSON.stringify(val));
 
       expect(Formatter.toResult(keys, values)).to.eql({
         alice: {
@@ -61,9 +61,18 @@ describe('Formatter', () => {
       });
     });
 
-    it('nulls are not include to result', () => {
+    it('supports keys explicitly set as null', () => {
+      const keys = ['alice:country', 'alice:explicit_null'];
+      const values = ['"USA"', 'null'];
+      expect(Formatter.toResult(keys, values)).to.eql({alice: {
+        country: 'USA',
+        explicit_null: null
+      }});
+    });
+
+    it('missing redis keys are not included to result', () => {
       const keys = ['alice:country', 'alice:email'];
-      const values = ['USA', null];
+      const values = ['"USA"', null];
       expect(Formatter.toResult(keys, values)).to.eql({alice: {country: 'USA'}});
     });
   });
