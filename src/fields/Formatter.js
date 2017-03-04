@@ -1,7 +1,7 @@
 'use strict';
 
 //
-// Formatter class converts (usernames, metanames) to database keys, back an forth.
+// Formatter class converts (userIds, metanames) to database keys, back an forth.
 //
 
 const toArray = (thing) => {
@@ -18,25 +18,25 @@ const crossJoin = (left, right) => {
 };
 
 class Formatter {
-  static toKeys (usernames, metanames) {
+  static toKeys (userIds, metanames) {
     return crossJoin(
-      toArray(usernames),
+      toArray(userIds),
       toArray(metanames)
     );
   }
 
-  static toResult (usernames, keys = [], values = []) {
-    const result = toArray(usernames).reduce((ref, username) => {
-      ref[username] = {};
+  static toResult (userIds, keys = [], values = []) {
+    const result = toArray(userIds).reduce((ref, userId) => {
+      ref[userId] = {};
       return ref;
     }, {});
 
     keys.forEach((key, index) => {
-      const [username, metaname] = key.split(':');
+      const [userId, metaname] = key.split(':');
       const value = values[index];
 
       if (value !== null)
-        result[username][metaname] = value;
+        result[userId][metaname] = value;
     });
 
     return result;

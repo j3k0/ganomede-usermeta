@@ -4,25 +4,25 @@ const Formatter = require('../../src/fields/Formatter');
 
 describe('Formatter', () => {
   describe('.toKeys()', () => {
-    it('converts single username and single meta', () => {
+    it('converts single userId and single meta', () => {
       expect(Formatter.toKeys('alice', 'country')).to.eql(['alice:country']);
     });
 
-    it('converts multiple usernames and single meta', () => {
+    it('converts multiple userIds and single meta', () => {
       expect(Formatter.toKeys(['alice', 'bob'], ['country'])).to.eql([
         'alice:country',
         'bob:country'
       ]);
     });
 
-    it('converts single username and multiple metas', () => {
+    it('converts single userId and multiple metas', () => {
       expect(Formatter.toKeys(['alice'], ['country', 'email'])).to.eql([
         'alice:country',
         'alice:email'
       ]);
     });
 
-    it('converts multiple usernames and multiple metas', () => {
+    it('converts multiple userIds and multiple metas', () => {
       expect(Formatter.toKeys(['alice', 'bob'], ['country', 'email'])).to.eql([
         'alice:country',
         'alice:email',
@@ -31,7 +31,7 @@ describe('Formatter', () => {
       ]);
     });
 
-    it('empty usernames mean empty keys', () => {
+    it('empty userIds mean empty keys', () => {
       expect(Formatter.toKeys([], ['x', 'y'])).to.eql([]);
     });
 
@@ -78,7 +78,7 @@ describe('Formatter', () => {
       });
     });
 
-    it('outputs empty object for usernames with no metas', () => {
+    it('outputs empty object for userIds with no metas', () => {
       expect(Formatter.toResult(['alice'], ['alice:missing'], [null])).to.eql({alice: {}});
     });
   });

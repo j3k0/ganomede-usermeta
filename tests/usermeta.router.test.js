@@ -47,7 +47,7 @@ describe('usermeta.router', () => {
   after(done => redisClient.flushdb(done));
   after(done => redisClient.quit(done));
 
-  describe('GET /:usernames/:metanames', () => {
+  describe('GET /:userIds/:metanames', () => {
     it('works for public fields', (done) => {
       go()
         .get('/alice,bob/country,email,key,no_one_has_this_one')

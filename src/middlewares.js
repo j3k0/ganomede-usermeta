@@ -11,7 +11,7 @@ const requireSecret = (req, res, next) => {
     : sendHttpError(next, new InvalidCredentialsError());
 };
 
-const parseUsernameFromSecretToken = (secret, token) => {
+const parseUserIdFromSecretToken = (secret, token) => {
   return secret && token && token.startsWith(secret) && (token.length > secret.length + 1)
     ? token.slice(secret.length + 1)
     : false;
@@ -22,10 +22,10 @@ const requireAuth = ({authdbClient, secret = false, paramName = 'token'} = {}) =
   if (!token)
     return sendHttpError(next, new InvalidAuthTokenError());
 
-  const spoofed = secret && parseUsernameFromSecretToken(secret, token);
+  const spoofed = secret && parseUserIdFromSecretToken(secret, token);
   if (spoofed) {
     req.ganomede.secretMatches = true;
-    req.ganomede.username = spoofed;
+    req.ganomede.userId = spoofed;
     return next();
   }
 
@@ -41,14 +41,14 @@ const requireAuth = ({authdbClient, secret = false, paramName = 'token'} = {}) =
     // Authdb already JSON.parsed redisResult for us,
     // but sometimes it is a string with user id,
     // and sometimes it is account object with {username, email, etc...}
-    const username = (typeof redisResult === 'string')
+    const userId = (typeof redisResult === 'string')
       ? redisResult
-      : redisResult.username;
+      : redisResult.username; // userId used to be username from profile
 
     if (!redisResult)
       return sendHttpError(next, new InvalidCredentialsError());
 
-    req.ganomede.username = username;
+    req.ganomede.userId = userId;
     return next();
   });
 };

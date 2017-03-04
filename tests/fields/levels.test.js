@@ -11,19 +11,19 @@ describe('levels', () => {
     expect(levels.internal).to.be.greaterThan(levels.private);
   });
 
-  it('public — no username and no secret', () => {
+  it('public — no userId and no secret', () => {
     expect(parse({secretMatches: false})).to.equal(levels.public);
   });
 
-  it('private — username but no secret', () => {
-    expect(parse({secretMatches: false, username: 'joe'})).to.equal(levels.private);
+  it('private — userId but no secret', () => {
+    expect(parse({secretMatches: false, userId: 'joe'})).to.equal(levels.private);
   });
 
-  it('internal — secret without username', () => {
+  it('internal — secret without userId', () => {
     expect(parse({secretMatches: true})).to.equal(levels.internal);
   });
 
-  it('internal — username and secret', () => {
-    expect(parse({secretMatches: true, username: 'joe'})).to.equal(levels.internal);
+  it('internal — userId and secret', () => {
+    expect(parse({secretMatches: true, userId: 'joe'})).to.equal(levels.internal);
   });
 });

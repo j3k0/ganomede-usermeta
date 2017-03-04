@@ -33,7 +33,7 @@ describe('Middlewares', () => {
 
       mw(req, {}, (err) => {
         expect(err).to.not.be.ok;
-        expect(req.ganomede).to.have.property('username', 'user');
+        expect(req.ganomede).to.have.property('userId', 'user');
         expect(req.ganomede).to.not.have.property('secretMatches');
         done();
       });
@@ -47,7 +47,7 @@ describe('Middlewares', () => {
 
       mw(req, {}, (err) => {
         expect(err).to.not.be.ok;
-        expect(req.ganomede).to.have.property('username', 'user');
+        expect(req.ganomede).to.have.property('userId', 'user');
         expect(req.ganomede).to.have.property('secretMatches', true);
         done();
       });

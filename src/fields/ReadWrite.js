@@ -22,21 +22,21 @@ class ReadWrite {
     this.db = new Db({redisClient});
   }
 
-  read (level, usernames, metadatas, callback) {
+  read (level, userIds, metadatas, callback) {
     const readables = this.filter.readable(level, metadatas);
-    const keys = Formatter.toKeys(usernames, readables);
+    const keys = Formatter.toKeys(userIds, readables);
 
     this.db.getKeys(keys, (err, values) =>
-      callback(err, Formatter.toResult(usernames, keys, values)));
+      callback(err, Formatter.toResult(userIds, keys, values)));
   }
 
-  write (level, username, metadata, value, callback) {
+  write (level, userId, metadata, value, callback) {
     const writable = this.filter.writable(level, metadata, value);
     if (writable instanceof Error)
       return setImmediate(callback, writable);
 
     this.db.setKeys(
-      Formatter.toKeys(username, metadata),
+      Formatter.toKeys(userId, metadata),
       [value],
       callback
     );

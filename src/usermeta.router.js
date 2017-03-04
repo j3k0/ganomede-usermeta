@@ -53,10 +53,10 @@ module.exports = ({
     next();
   };
 
-  const readMetas = (usernamesKey) => (req, res, next) => {
+  const readMetas = (userIdsKey) => (req, res, next) => {
     const {accessLevel, metanames} = req.ganomede;
-    const usernames = req.ganomede[usernamesKey];
-    readWrite.read(accessLevel, usernames, metanames, (err, result) => {
+    const userIds = req.ganomede[userIdsKey];
+    readWrite.read(accessLevel, userIds, metanames, (err, result) => {
       if (err)
         return sendHttpError(next, err);
 
@@ -66,11 +66,11 @@ module.exports = ({
   };
 
   return (prefix, server) => {
-    server.get(`${prefix}/:usernames/:metanames`,
-      parseLevel, parseCsvParam('usernames'), parseCsvParam('metanames'), readMetas('usernames'));
+    server.get(`${prefix}/:userIds/:metanames`,
+      parseLevel, parseCsvParam('userIds'), parseCsvParam('metanames'), readMetas('userIds'));
 
     server.get(`${prefix}/auth/:token/:metanames`,
-      requireAuth, parseLevel, parseCsvParam('metanames'), readMetas('username'));
+      requireAuth, parseLevel, parseCsvParam('metanames'), readMetas('userId'));
 
     server.post(`${prefix}/auth/:token/:metaname`, requireAuth, parseLevel, (req, res, next) => {
       if (!(req.body && hasOwnProperty(req.body, 'value') && (typeof req.body.value === 'string')))
@@ -78,7 +78,7 @@ module.exports = ({
 
       readWrite.write(
         req.ganomede.accessLevel,
-        req.ganomede.username,
+        req.ganomede.userId,
         req.params.metaname,
         req.body.value,
         (err) => {

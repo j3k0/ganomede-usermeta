@@ -17,9 +17,9 @@ Attach metadata to users.
  * `REDIS_USERMETA_PORT_6379_TCP_ADDR` — meta redis hostname
  * `REDIS_USERMETA_PORT_6379_TCP_PORT` — meta redis port
 
-## `GET /:usernames/:keys`
+## `GET /:userIds/:keys`
 
-Retrieve publicly available metadata. Both, `:usernames` and `:keys` are comma-separated list. Attach `secret` query string param to retrieve fields up to internal.
+Retrieve publicly available metadata. Both, `:userIds` and `:keys` are comma-separated list. Attach `secret` query string param to retrieve fields up to internal.
 
 Missing fields and those you are not allowed to read will be omitted (as opposed to being HTTP error).
 
@@ -38,7 +38,7 @@ Suppose `country` is public key and `email` is a protected one.
 
 ## `GET /auth/:token/:keys`
 
-Retrieve `public`, `protected` and `private` keys for a user with login token equal `:token`. Make `:token` be `"API_SECRET.${username}"` to retrieve fields up to `internal`.
+Retrieve `public`, `protected` and `private` keys for a user with login token equal `:token`. Make `:token` be `"API_SECRET.${userId}"` to retrieve fields up to `internal`.
 
 Missing fields and those you are not allowed to read will be omitted (as opposed to being HTTP error).
 
@@ -63,7 +63,7 @@ In case of invalid token.
 
 ## `POST /auth/:token/:key`
 
-Write `public` and `protected` meta value to a `:key` of a user `:token` points to. Make `:token` be `"API_SECRET.${username}"` to write fields up to `internal` and no byte limit.
+Write `public` and `protected` meta value to a `:key` of a user `:token` points to. Make `:token` be `"API_SECRET.${userId}"` to write fields up to `internal` and no byte limit.
 
 ### body (application/json)
 
