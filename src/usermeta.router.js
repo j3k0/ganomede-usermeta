@@ -10,7 +10,7 @@ const {hasOwnProperty} = require('./utils');
 const config = require('../config');
 
 module.exports = ({
-  secret,
+  secret = config.secret,
   authdbClient = authdb.createClient(config.redisAuthdb),
   readWrite = new ReadWrite({
     redisClient: redis.createClient(config.redisUsermeta),
