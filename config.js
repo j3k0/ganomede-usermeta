@@ -97,12 +97,12 @@ module.exports = {
   },
 
   redisAuthdb: {
-    hostname: ServiceEnv.host('REDIS_AUTH', 6379),
+    host: ServiceEnv.host('REDIS_AUTH', 6379),
     port: ServiceEnv.port('REDIS_AUTH', 6379)
   },
 
   redisUsermeta: {
-    hostname: ServiceEnv.host('REDIS_USERMETA', 6379),
+    host: ServiceEnv.host('REDIS_USERMETA', 6379),
     port: ServiceEnv.port('REDIS_USERMETA', 6379)
   }
 };
