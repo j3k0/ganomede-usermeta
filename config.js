@@ -7,7 +7,7 @@ const pkg = require('./package.json');
 
 const parseLogLevel = (envValue) => {
   const defaultLevel = 'INFO';
-  const desiredLevel = envValue ? String(envValue) : defaultLevel;
+  const desiredLevel = envValue ? String(envValue).toUpperCase() : defaultLevel;
   const levels = [
     'FATAL',
     'ERROR',
@@ -77,7 +77,7 @@ parseFields.validKeyRegexp = /^[a-z0-9_$]+$/i;
 
 module.exports = {
   name: pkg.name,
-  logLevel: parseLogLevel(process.env.BUNYAN_LEVEL),
+  logLevel: parseLogLevel(process.env.LOG_LEVEL),
   secret: parseApiSecret(),
 
   fields: global.__ganomedeTest ? {} : {
