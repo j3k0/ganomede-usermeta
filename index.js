@@ -1,5 +1,14 @@
 'use strict';
 
+// Use New Relic if LICENSE_KEY has been specified.
+if (process.env.NEW_RELIC_LICENSE_KEY) {
+    if (!process.env.NEW_RELIC_APP_NAME) {
+        var pk = require('./package.json');
+        process.env.NEW_RELIC_APP_NAME = pk.api;
+    }
+    require('newrelic');
+}
+
 const async = require('async');
 const cluster = require('cluster');
 const restify = require('restify');
