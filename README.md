@@ -17,11 +17,20 @@ Attach metadata to users.
  * `REDIS_USERMETA_PORT_6379_TCP_ADDR` — meta redis hostname
  * `REDIS_USERMETA_PORT_6379_TCP_PORT` — meta redis port
 
+Reading and writing different keys requires different access levels:
+
+  * public (read anyone, write token);
+  * protected (read token, write token);
+  * private (read token, write API_SECRET);
+  * internal (read API_SECRET, write API_SECRET).
+
+Keys that are not listed in env vars can't be read or written.
+
 ## `GET /:userIds/:keys`
 
 Retrieve publicly available metadata. Both, `:userIds` and `:keys` are comma-separated list. Attach `secret` query string param to retrieve fields up to internal.
 
-Missing fields and those you are not allowed to read will be omitted (as opposed to being HTTP error).
+Missing or unknown keys, and those you are not allowed to read will be omitted (as opposed to being HTTP error).
 
 ### response [200] OK (application/json)
 
@@ -40,7 +49,7 @@ Suppose `country` is public key and `email` is a protected one.
 
 Retrieve `public`, `protected` and `private` keys for a user with login token equal `:token`. Make `:token` be `"API_SECRET.${userId}"` to retrieve fields up to `internal`.
 
-Missing fields and those you are not allowed to read will be omitted (as opposed to being HTTP error).
+Missing or unknown keys, and those you are not allowed to read will be omitted (as opposed to being HTTP error).
 
 ### response [200] OK (application/json)
 
@@ -77,7 +86,7 @@ JSON with single key `"value"` and value being a string.
 ### response [200] OK
 ### response [401] Not Authorzied
 
-In case of invalid token or trying to write `private` and up without `API_SECRET`.
+In case of invalid token, trying to write `private` and up without `API_SECRET`, or unknown key.
 
 ``` json
  { "restCode": "InvalidCredentialsError",
