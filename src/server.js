@@ -27,16 +27,31 @@ const initReqGanomede = (req, res, next) => {
   next();
 };
 
-const requestLogger = (req, res, next) => {
-  req.log.info({req_id: req.id()}, `${req.method} ${req.url}`);
-  next();
-};
-
 // Automatically add a request-id to the response
 const setRequestId = (req, res, next) => {
   res.setHeader('x-request-id', req.id());
+  req.log = req.log.child({req_id: req.id()});
   next();
 };
+
+const shouldLogRequest = (req) =>
+  (req.url !== `/${config.http.prefix}/ping/_health_check`);
+
+const shouldLogResponse = (res) =>
+  (res && res.statusCode >= 500);
+
+const filteredLogger = (errorsOnly, logger) => (req, res, next) => {
+  const logError = errorsOnly && shouldLogResponse(res);
+  const logInfo = !errorsOnly && (
+    shouldLogRequest(req) || shouldLogResponse(res));
+  if (logError || logInfo)
+    logger(req, res);
+  if (next && typeof next === 'function')
+    next();
+};
+
+const requestLogger = filteredLogger(false, (req) =>
+  req.log.info({req_id: req.id()}, `${req.method} ${req.url}`));
 
 module.exports = () => {
   const server = restify.createServer({
@@ -51,7 +66,8 @@ module.exports = () => {
   server.use(setRequestId);
 
   // Audit requests
-  server.on('after', restify.auditLogger({log: logger}));
+  server.on('after', filteredLogger(process.env.NODE_ENV === 'production',
+    restify.auditLogger({log: logger, body: true})));
 
   return server;
 };
