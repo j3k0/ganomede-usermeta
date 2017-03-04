@@ -73,7 +73,7 @@ const parseFields = (envName) => {
     });
 };
 
-parseFields.validKeyRegexp = /^[a-z0-9_]+$/i;
+parseFields.validKeyRegexp = /^[a-z0-9_$]+$/i;
 
 module.exports = {
   name: pkg.name,
