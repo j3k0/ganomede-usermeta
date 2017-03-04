@@ -45,8 +45,10 @@ module.exports = ({
 
   const parseCsvParam = (paramKey) => (req, res, next) => {
     const values = normalizeCSV(req.params, paramKey);
+
     if (values instanceof Error)
       return sendHttpError(next, values);
+
     req.ganomede[paramKey] = values;
     next();
   };
@@ -55,7 +57,11 @@ module.exports = ({
     const {accessLevel, metanames} = req.ganomede;
     const usernames = req.ganomede[usernamesKey];
     readWrite.read(accessLevel, usernames, metanames, (err, result) => {
-      return err ? sendHttpError(next, err) : res.json(result);
+      if (err)
+        return sendHttpError(next, err);
+
+      res.json(result);
+      next();
     });
   };
 
@@ -76,9 +82,11 @@ module.exports = ({
         req.params.metaname,
         req.body.value,
         (err) => {
-          return err
-            ? sendHttpError(next, err)
-            : res.json({});
+          if (err)
+            return sendHttpError(next, err);
+
+          res.json({});
+          next();
         }
       );
     });
