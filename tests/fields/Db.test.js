@@ -27,13 +27,13 @@ describe('Db', () => {
     });
   });
 
-  it('#setKeys() calls mset with JSON strings', (done) => {
+  it('#setKeys() calls mset with strings', (done) => {
     const redisClient = td.object(['mset']);
     const db = new Db({redisClient});
-    const keys = ['a', 'b', 'c', 'd'];
-    const values = [null, {x: true}, 3, ['f']];
+    const keys = ['a', 'b'];
+    const values = ['some val', 'too dreamy'];
 
-    td.when(redisClient.mset(['a', 'null', 'b', '{"x":true}', 'c', '3', 'd', '["f"]'], td.callback))
+    td.when(redisClient.mset(['a', 'some val', 'b', 'too dreamy'], td.callback))
       .thenCallback(null, 'OK');
 
     db.setKeys(keys, values, (err, reply) => {

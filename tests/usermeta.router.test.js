@@ -34,12 +34,11 @@ describe('usermeta.router', () => {
       // tokens
       'alice_token', '"alice"',
       // some metdata
-      'alice:country', '"USA"',
-      'alice:email', '"alice@example.com"',
-      'alice:key', '"alice-key"',
-      'bob:country', '"Russia"',
-      'bob:email', '"bob@example.com"',
-      'bob:key', 'null',
+      'alice:country', 'USA',
+      'alice:email', 'alice@example.com',
+      'alice:key', 'alice-key',
+      'bob:country', 'Russia',
+      'bob:email', 'bob@example.com'
     ])
     .exec(done)
   );
@@ -63,6 +62,15 @@ describe('usermeta.router', () => {
         .query({secret: 'api_secret'})
         .expect(200, {alice: {email: 'alice@example.com'}}, done);
     });
+
+    it('empty objects', (done) => {
+      go()
+        .get('/alice,some-random-guy/no-such-field')
+        .expect(200, {
+          alice: {},
+          'some-random-guy': {}
+        }, done);
+    });
   });
 
   describe('GET /auth/:token/:metanames', () => {
@@ -83,8 +91,7 @@ describe('usermeta.router', () => {
         .expect(200, {
           bob: {
             country: 'Russia',
-            email: 'bob@example.com',
-            key: null
+            email: 'bob@example.com'
           },
         }, done);
     });
@@ -100,7 +107,7 @@ describe('usermeta.router', () => {
           expect(err).to.be.null;
           redisClient.get('alice:email', (err, val) => {
             expect(err).to.be.null;
-            expect(val).to.equal('"new-alice@example.com"');
+            expect(val).to.equal('new-alice@example.com');
             done();
           });
         });
@@ -115,7 +122,7 @@ describe('usermeta.router', () => {
           expect(err).to.be.null;
           redisClient.get('bob:key', (err, val) => {
             expect(err).to.be.null;
-            expect(val).to.equal('"bob-key"');
+            expect(val).to.equal('bob-key');
             done();
           });
         });

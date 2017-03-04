@@ -5,9 +5,6 @@ class Db {
     this.redis = redisClient;
   }
 
-  // Note how this does not parse JSON.
-  // We do so in Formatter, because that way we can distinguish between
-  // missing redis keys and redis key set to null.
   getKeys (keys, callback) {
     return (keys.length === 0)
       ? setImmediate(callback, null, [])
@@ -17,11 +14,8 @@ class Db {
   setKeys (keys, values, callback) {
     const args = [];
 
-    for (let index = 0; index < keys.length; ++index) {
-      const key = keys[index];
-      const value = JSON.stringify(values[index]);
-      args.push(key, value);
-    }
+    for (let index = 0; index < keys.length; ++index)
+      args.push(keys[index], values[index]);
 
     return this.redis.mset(args, callback);
   }

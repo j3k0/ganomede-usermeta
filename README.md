@@ -21,7 +21,7 @@ Attach metadata to users.
 
 Retrieve publicly available metadata. Both, `:usernames` and `:keys` are comma-separated list. Attach `secret` query string param to retrieve fields up to internal.
 
-Fields that you are not allowed to read will be omitted (as opposed to being HTTP error).
+Missing fields and those you are not allowed to read will be omitted (as opposed to being HTTP error).
 
 ### response [200] OK (application/json)
 
@@ -40,7 +40,7 @@ Suppose `country` is public key and `email` is a protected one.
 
 Retrieve `public`, `protected` and `private` keys for a user with login token equal `:token`. Make `:token` be `"API_SECRET.${username}"` to retrieve fields up to `internal`.
 
-Fields that you are not allowed to read will be omitted (as opposed to being HTTP error).
+Missing fields and those you are not allowed to read will be omitted (as opposed to being HTTP error).
 
 ### response [200] OK (application/json)
 
@@ -67,10 +67,10 @@ Write `public` and `protected` meta value to a `:key` of a user `:token` points 
 
 ### body (application/json)
 
-JSON with single key `"value"` and value being any JSON to write.
+JSON with single key `"value"` and value being a string.
 
 ``` json
- { "value": {"something": true}
+ { "value": "string to write as a meta value"
  }
 ```
 

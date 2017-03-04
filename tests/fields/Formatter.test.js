@@ -54,9 +54,9 @@ describe('Formatter', () => {
         'alice@example.com',
         'Russia',
         'bob@example.com'
-      ].map(val => JSON.stringify(val));
+      ];
 
-      expect(Formatter.toResult(keys, values)).to.eql({
+      expect(Formatter.toResult(['alice', 'bob'], keys, values)).to.eql({
         alice: {
           country: 'USA',
           email: 'alice@example.com'
@@ -69,19 +69,17 @@ describe('Formatter', () => {
       });
     });
 
-    it('supports keys explicitly set as null', () => {
-      const keys = ['alice:country', 'alice:explicit_null'];
-      const values = ['"USA"', 'null'];
-      expect(Formatter.toResult(keys, values)).to.eql({alice: {
-        country: 'USA',
-        explicit_null: null
-      }});
-    });
-
     it('missing redis keys are not included to result', () => {
       const keys = ['alice:country', 'alice:email'];
-      const values = ['"USA"', null];
-      expect(Formatter.toResult(keys, values)).to.eql({alice: {country: 'USA'}});
+      const values = ['USA', null];
+      expect(Formatter.toResult(['alice', 'bob'], keys, values)).to.eql({
+        alice: {country: 'USA'},
+        bob: {}
+      });
+    });
+
+    it('outputs empty object for usernames with no metas', () => {
+      expect(Formatter.toResult(['alice'], ['alice:missing'], [null])).to.eql({alice: {}});
     });
   });
 });

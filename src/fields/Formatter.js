@@ -25,18 +25,21 @@ class Formatter {
     );
   }
 
-  static toResult (keys, values) {
-    return keys && values && keys.reduce((ref, key, index) => {
-      const value = values[index];
-
-      if (value !== null) {
-        const [username, metaname] = key.split(':');
-        ref[username] = ref[username] || {};
-        ref[username][metaname] = JSON.parse(value);
-      }
-
+  static toResult (usernames, keys = [], values = []) {
+    const result = toArray(usernames).reduce((ref, username) => {
+      ref[username] = {};
       return ref;
     }, {});
+
+    keys.forEach((key, index) => {
+      const [username, metaname] = key.split(':');
+      const value = values[index];
+
+      if (value !== null)
+        result[username][metaname] = value;
+    });
+
+    return result;
   }
 }
 

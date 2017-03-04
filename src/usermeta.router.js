@@ -67,7 +67,7 @@ module.exports = ({
       requireAuth, parseLevel, parseCsvParam('metanames'), readMetas('username'));
 
     server.post(`${prefix}/auth/:token/:metaname`, requireAuth, parseLevel, (req, res, next) => {
-      if (!(req.body && hasOwnProperty(req.body, 'value')))
+      if (!(req.body && hasOwnProperty(req.body, 'value') && (typeof req.body.value === 'string')))
         return sendHttpError(next, new RequestValidationError('InvalidValue', 'Invalid value'));
 
       readWrite.write(
