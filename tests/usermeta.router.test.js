@@ -56,6 +56,13 @@ describe('usermeta.router', () => {
           bob: {country: 'Russia'}
         }, done);
     });
+
+    it('secret works', (done) => {
+      go()
+        .get('/alice/email')
+        .query({secret: 'api_secret'})
+        .expect(200, {alice: {email: 'alice@example.com'}}, done);
+    });
   });
 
   describe('GET /auth/:token/:metanames', () => {

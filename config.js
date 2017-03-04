@@ -78,7 +78,7 @@ parseFields.validKeyRegexp = /^[a-z0-9_$]+$/i;
 module.exports = {
   name: pkg.name,
   logLevel: parseLogLevel(process.env.BUNYAN_LEVEL),
-  secret: process.env.hasOwnProperty('API_SECRET') && parseApiSecret(),
+  secret: parseApiSecret(),
 
   fields: global.__ganomedeTest ? {} : {
     public: parseFields('USERMETA_PUBLIC_KEYS'),

@@ -5,11 +5,8 @@
 class Levels {
   // There are no `protected` access level.
   static parse ({secretMatches, username}) {
-    if (secretMatches) {
-      return username
-        ? Levels.internal
-        : Levels.public;
-    }
+    if (secretMatches)
+      return Levels.internal;
 
     return username
       ? Levels.private
