@@ -54,8 +54,9 @@ module.exports = ({
   const readMetas = (usernamesKey) => (req, res, next) => {
     const {accessLevel, metanames} = req.ganomede;
     const usernames = req.ganomede[usernamesKey];
-    readWrite.read(accessLevel, usernames, metanames, (err, result) =>
-      err ? sendHttpError(next, err) : res.json(result));
+    readWrite.read(accessLevel, usernames, metanames, (err, result) => {
+      return err ? sendHttpError(next, err) : res.json(result);
+    });
   };
 
   return (prefix, server) => {
