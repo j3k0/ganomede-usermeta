@@ -29,13 +29,23 @@ const requireAuth = ({authdbClient, secret = false, paramName = 'token'} = {}) =
     return next();
   }
 
-  authdbClient.getAccount(token, (err, username) => {
+  authdbClient.getAccount(token, (err, redisResult) => {
     if (err) {
       logger.error('authdbClient.getAccount("%j") failed', token, err);
       return sendHttpError(next, new restify.InternalServerError());
     }
 
-    if (!username)
+    if (!redisResult)
+      return sendHttpError(next, new InvalidCredentialsError());
+
+    // Authdb already JSON.parsed redisResult for us,
+    // but sometimes it is a string with user id,
+    // and sometimes it is account object with {username, email, etc...}
+    const username = (typeof redisResult === 'string')
+      ? redisResult
+      : redisResult.username;
+
+    if (!redisResult)
       return sendHttpError(next, new InvalidCredentialsError());
 
     req.ganomede.username = username;

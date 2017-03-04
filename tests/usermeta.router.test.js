@@ -33,6 +33,7 @@ describe('usermeta.router', () => {
     .mset([
       // tokens
       'alice_token', '"alice"',
+      'bob_token', JSON.stringify({username: 'bob'}),
       // some metdata
       'alice:country', 'USA',
       'alice:email', 'alice@example.com',
@@ -100,14 +101,14 @@ describe('usermeta.router', () => {
   describe('POST /auth/:token/:metaname', () => {
     it('works with token', (done) => {
       go()
-        .post('/auth/alice_token/email')
-        .send({value: 'new-alice@example.com'})
+        .post('/auth/bob_token/email')
+        .send({value: 'new-bob@example.com'})
         .expect(200)
         .end((err, res) => {
           expect(err).to.be.null;
-          redisClient.get('alice:email', (err, val) => {
+          redisClient.get('bob:email', (err, val) => {
             expect(err).to.be.null;
-            expect(val).to.equal('new-alice@example.com');
+            expect(val).to.equal('new-bob@example.com');
             done();
           });
         });
