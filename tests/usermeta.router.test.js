@@ -20,7 +20,6 @@ describe('usermeta.router', () => {
         public: ['country', 'no_one_has_this_one'],
         protected: ['email'],
         private: ['private-field'],
-        internal: ['key'],
         maxBytes: 200
       }
     })
@@ -88,11 +87,12 @@ describe('usermeta.router', () => {
 
     it('works with secret', (done) => {
       go()
-        .get('/auth/api_secret.bob/country,email,key,no_one_has_this_one')
+        .get('/auth/api_secret.alice/country,email,key,no_one_has_this_one')
         .expect(200, {
-          bob: {
-            country: 'Russia',
-            email: 'bob@example.com'
+          alice: {
+            country: 'USA',
+            email: 'alice@example.com',
+            key: 'alice-key'
           },
         }, done);
     });

@@ -7,8 +7,7 @@ describe('Rules', () => {
   const rules = new Rules({
     publicKeys: ['public', 'pub01'],
     protectedKeys: ['protected', 'pro01'],
-    privateKeys: ['private', 'pri01'],
-    internalKeys: ['internal', 'int01']
+    privateKeys: ['private', 'pri01']
   });
 
   describe('new Rules()', () => {
@@ -16,8 +15,7 @@ describe('Rules', () => {
       const create = () => new Rules({
         publicKeys: ['same key'],
         protectedKeys: ['same key'],
-        privateKeys: ['different'],
-        internalKeys: ['i am unique']
+        privateKeys: ['different']
       });
 
       expect(create).to.throw(/^Intersection between different key levels/);
@@ -39,13 +37,9 @@ describe('Rules', () => {
       expect(rules.canRead(levels.private, 'pri01')).to.be.true;
     });
 
-    it('internal can be read by internal and up', () => {
-      expect(rules.canRead(levels.private, 'int01')).to.be.false;
-      expect(rules.canRead(levels.internal, 'int01')).to.be.true;
-    });
-
-    it('no one can read uknown keys', () => {
-      expect(rules.canRead(levels.internal, 'missing')).to.be.false;
+    it('internal can read unspecified keys', () => {
+      expect(rules.canRead(levels.private, 'unspecified')).to.be.false;
+      expect(rules.canRead(levels.internal, 'unspecified')).to.be.true;
     });
   });
 
@@ -65,13 +59,9 @@ describe('Rules', () => {
       expect(rules.canWrite(levels.internal, 'pri01')).to.be.true;
     });
 
-    it('internal can be written by internal and up', () => {
-      expect(rules.canWrite(levels.private, 'int01')).to.be.false;
-      expect(rules.canWrite(levels.internal, 'int01')).to.be.true;
-    });
-
-    it('no one can write uknown keys', () => {
-      expect(rules.canWrite(levels.internal, 'missing')).to.be.false;
+    it('internal can write unspecified keys', () => {
+      expect(rules.canWrite(levels.private, 'unspecified')).to.be.false;
+      expect(rules.canWrite(levels.internal, 'unspecified')).to.be.true;
     });
   });
 });

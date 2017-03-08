@@ -84,8 +84,7 @@ module.exports = {
     public: parseFields('USERMETA_PUBLIC_KEYS'),
     protected: parseFields('USERMETA_PROTECTED_KEYS'),
     private: parseFields('USERMETA_PRIVATE_KEYS'),
-    internal: parseFields('USERMETA_INTERNAL_KEYS'),
-    maxBytes: parseMaxBytes() // for non-internal fields
+    maxBytes: parseMaxBytes() // byte limit for non-internal writes
   },
 
   http: {

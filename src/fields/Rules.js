@@ -13,8 +13,14 @@
 const {debugInspect} = require('../utils');
 const levels = require('./levels');
 
-const LEVELS = Object.keys(levels);
-const LEVEL_DOES_NOT_EXIST = NaN;
+// I am wondering whether we should check higher level first.
+// Though since we test for intersection, it's fine.
+const KEY_LOOKUP_ORDER = [
+  'public',
+  'protected',
+  'private',
+  'internal'
+];
 
 const throwOnIntersection = (...levels) => {
   const sizes = {
@@ -27,21 +33,18 @@ const throwOnIntersection = (...levels) => {
 };
 
 class Rules {
-  constructor ({publicKeys, protectedKeys, privateKeys, internalKeys}) {
+  constructor ({publicKeys, protectedKeys, privateKeys}) {
     this.public = new Set(publicKeys);
     this.protected = new Set(protectedKeys);
     this.private = new Set(privateKeys);
-    this.internal = new Set(internalKeys);
+    this.internal = {has: () => true}; // Any key that is not specifed above.
 
-    throwOnIntersection(...publicKeys, ...protectedKeys, ...privateKeys, ...internalKeys);
+    throwOnIntersection(...publicKeys, ...protectedKeys, ...privateKeys);
   }
 
   _levelOf (key) {
-    const levelKey = LEVELS.find(level => this[level].has(key));
-
-    return levelKey
-      ? levels[levelKey]
-      : LEVEL_DOES_NOT_EXIST;
+    const level = KEY_LOOKUP_ORDER.find(level => this[level].has(key));
+    return levels[level];
   }
 
   canWrite (level, key) {
@@ -50,21 +53,13 @@ class Rules {
       case levels.protected:
         return level >= levels.protected;
 
-      case levels.private:
-      case levels.internal:
-        return level >= levels.internal;
-
       default:
-        return false;
+        return level >= levels.internal;
     }
   }
 
   canRead (level, key) {
-    const keyLevel = this._levelOf(key);
-
-    return Number.isNaN(keyLevel)
-      ? false
-      : level >= keyLevel;
+    return level >= this._levelOf(key);
   }
 }
 
