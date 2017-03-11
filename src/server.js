@@ -35,7 +35,7 @@ const setRequestId = (req, res, next) => {
 };
 
 const shouldLogRequest = (req) =>
-  (req.url !== `/${config.http.prefix}/ping/_health_check`);
+  req.url.indexOf(`${config.http.prefix}/ping/_health_check`) !== 0;
 
 const shouldLogResponse = (res) =>
   (res && res.statusCode >= 500);
