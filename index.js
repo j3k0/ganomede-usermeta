@@ -17,7 +17,7 @@ const config = require('./config');
 const about = require('./src/about.router');
 const ping = require('./src/ping.router');
 const usermeta = require('./src/usermeta.router');
-const createServer = require('./src/server');
+const {createServer} = require('./src/server');
 const logger = require('./src/logger');
 
 const master = () => {
@@ -61,9 +61,9 @@ const child = () => {
     ], () => cluster.worker.disconnect());
   });
 
-  about(config.http.prefix, server);
-  ping(config.http.prefix, server);
-  usermeta()(config.http.prefix, server);
+  about.addRoutes(config.http.prefix, server);
+  ping.addRoutes(config.http.prefix, server);
+  usermeta.createRouter().addRoutes(config.http.prefix, server);
 
   server.listen(config.http.port, config.http.host, () => {
     const {port, family, address} = server.address();

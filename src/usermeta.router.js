@@ -11,7 +11,7 @@ const config = require('../config');
 
 const createRouter = ({
   secret = config.secret,
-  authdbClient = ganomedeDirectory.createAuthdbClient(),
+  authdbClient = ganomedeDirectory.createAuthdbClient({}),
   readWrite = new ReadWrite({
     redisClient: redis.createClient(config.redisUsermeta),
     fieldsConfig: config.fields

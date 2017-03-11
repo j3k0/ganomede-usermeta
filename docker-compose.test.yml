@@ -3,7 +3,8 @@ services:
 
   sut:
     build: .
-    command: sh -c "npm run lint && npm t && ./tests/rest_api.sh"
+    # command: sh -c "npm run lint && npm t && ./tests/rest_api.sh"
+    command: sh -c "./tests/rest_api.sh"
     volumes:
      - ./src:/home/app/code/src
      - ./tests:/home/app/code/tests
@@ -19,19 +20,21 @@ services:
     build: .
     volumes:
      - ./src:/home/app/code/src
+     - ./index.js:/home/app/code/index.js
     depends_on:
      - authredis
      - usermetaredis
      - directory
     environment:
      - "API_SECRET=1234"
-     - "USERMETA_PUBLIC_KEYS=country,yearofbirth"
-     - "USERMETA_PROTECTED_KEYS=$$friends"
+     - "USERMETA_PUBLIC_KEYS=country,yearofbirth,testpublic"
+     - "USERMETA_PROTECTED_KEYS=$$friends,testprotected"
      - "USERMETA_PRIVATE_KEYS=$$banned,$$alias"
      - "USERMETA_INTERNAL_KEYS="
      - "USERMETA_MAX_LENGTH=1000"
      - "REDIS_USERMETA_PORT_6379_TCP_ADDR=usermetaredis"
      - "REDIS_AUTH_PORT_6379_TCP_ADDR=authredis"
+     - "DIRECTORY_PORT_8000_TCP_ADDR=directory"
      - "NODE_ENV="
      - "LOG_LEVEL=debug"
     ports:
@@ -42,10 +45,13 @@ services:
     depends_on:
       - directorysync
     environment:
+     - "DIRECTORY_PORT_8000_TCP_ADDR=directory"
      - "COUCH_DIRECTORY_PORT_5984_TCP_ADDR=directorycouch"
      - "REDIS_AUTH_PORT_6379_TCP_ADDR=authredis"
      - "API_SECRET=1234"
      - "COUCH_DIRECTORY_SYNC="
+    ports:
+     - "8001:8000"
 
   # will just sync the database
   directorysync:
