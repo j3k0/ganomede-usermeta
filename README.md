@@ -6,11 +6,10 @@ Attach metadata to users.
 ## Configuration
 
  * `API_SECRET` — secret to compare to for internal access level
- * keys (all are required, pass empty string for `[]`):
+ * keys (all are required, any key that is not specified is considered internal, pass empty string for `[]`):
    * `USERMETA_PUBLIC_KEYS` — comma-separated list of keys (public read, token write)
    * `USERMETA_PROTECTED_KEYS` — comma-separated list of keys (token read, token write)
    * `USERMETA_PRIVATE_KEYS` — comma-separated list of keys (token read, secret write)
-   * `USERMETA_INTERNAL_KEYS` — comma-separated list of keys (secret read, secret write)
    * `USERMETA_MAX_LENGTH` (optional, default `200`) — max byte length of token-writable keys (those that don't require API_SECRET to be written)
  * `REDIS_AUTH_PORT_6379_TCP_ADDR` — authdb redis hostname
  * `REDIS_AUTH_PORT_6379_TCP_PORT` — authdb redis port

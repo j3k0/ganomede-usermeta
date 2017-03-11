@@ -10,8 +10,7 @@ describe('Filter', () => {
   const rules = new Rules({
     publicKeys: ['public', 'pub01'],
     protectedKeys: ['protected', 'pro01'],
-    privateKeys: ['private', 'pri01'],
-    internalKeys: ['internal', 'int01']
+    privateKeys: ['private', 'pri01']
   });
 
   const filter = new Filter({rules, maxPublicBytes: 10});

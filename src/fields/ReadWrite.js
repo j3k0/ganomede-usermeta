@@ -5,17 +5,13 @@ const Filter = require('./Filter');
 const Formatter = require('./Formatter');
 const Rules = require('./Rules');
 
-// 0 logic, just tiyng up all the dependencies, nice :)
-// let's keep it this way
-
 class ReadWrite {
   // fieldsConfig are the same format as in config.js
   constructor ({redisClient, fieldsConfig}) {
     const rules = new Rules({
       publicKeys: fieldsConfig.public,
       protectedKeys: fieldsConfig.protected,
-      privateKeys: fieldsConfig.private,
-      internalKeys: fieldsConfig.internal
+      privateKeys: fieldsConfig.private
     });
 
     this.filter = new Filter({rules, maxPublicBytes: fieldsConfig.maxBytes});
