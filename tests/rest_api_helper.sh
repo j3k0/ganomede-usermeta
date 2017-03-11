@@ -13,11 +13,12 @@ fi
 
 set -e
 
-function CURL() {
+curlbin=`which curl`
+function curl() {
     if [ "x$RECREATE" = "x1" ]; then
       test -e docker-compose.yml && docker-compose up --no-deps --no-recreate -d || true
     fi
-    curl -s -H 'Content-type: application/json' "$@" > .curloutput.txt
+    $curlbin -s -H 'Content-type: application/json' "$@" > .curloutput.txt
     cat .curloutput.txt | json_pp > .testoutput.txt
     # testoutput
 }
@@ -26,8 +27,13 @@ function json_pp() {
     xargs -0 node -e "console.log(JSON.stringify(JSON.parse(process.argv[1]), null, 2))"
 }
 
+function printOutput() {
+    cat .testoutput.txt
+}
+
 function outputIncludes() {
-    cat .testoutput.txt | grep "$@" > /dev/null || (echo "      FAIL" && false)
+    cat .testoutput.txt | grep "$@" > /dev/null || echo "      FAIL"
+    cat .testoutput.txt | grep "$@" > /dev/null || (printOutput && false)
 }
 
 function outputExcludes() {
@@ -37,4 +43,29 @@ function outputExcludes() {
 
 function it() {
     echo "    - $@"
+}
+
+function initializeTestUser() {
+    echo "    - [initializing test user]" >&2
+    curl $DIRECTORY_URL/directory/v1/users -d '{
+        "id":"'${TEST_USER_ID}'",
+        "password":"'${TEST_PASSWORD}'",
+        "secret":"'$API_SECRET'",
+        "aliases":[
+            {"type":"name","public":true,"value":"'${TEST_USERNAME}'"},
+            {"type":"tag","public":true,"value":"'${TEST_TAG}'"},
+            {"type":"email","public":false,"value":"'${TEST_EMAIL}'"}
+        ]
+    }'
+    curl $DIRECTORY_URL/directory/v1/users/auth -d '{
+        "id":"'${TEST_USER_ID}'",
+        "password":"'${TEST_PASSWORD}'"
+    }'
+    outputIncludes "token" || echo "Failed to authenticate test user"
+    outputIncludes "token"
+
+    # output the auth token
+    AUTH_TOKEN=`printOutput | grep token | cut -d\" -f4`
+    echo "      [auth token: $AUTH_TOKEN]" >&2
+    echo $AUTH_TOKEN
 }
