@@ -1,9 +1,10 @@
 'use strict';
 
-const restify = require('restify');
-const middlewares = require('../src/middlewares');
-
 describe('Middlewares', () => {
+
+  const restify = require('restify');
+  const middlewares = require('../src/middlewares');
+
   describe('requireSecret()', () => {
     it('calls next() if req.ganomede.secretMatches', (done) => {
       middlewares.requireSecret({ganomede: {secretMatches: true}}, {}, done);

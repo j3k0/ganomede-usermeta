@@ -26,6 +26,7 @@
   "devDependencies": {
     "chai": "^3.5.0",
     "eslint": "^3.8.0",
+    "fakeredis": "^2.0.0",
     "mocha": "^3.1.2",
     "nodemon": "^1.11.0",
     "supertest": "^3.0.0",
@@ -33,9 +34,9 @@
   },
   "dependencies": {
     "async": "^2.1.2",
-    "authdb": "^0.3.0",
     "bunyan": "^1.8.1",
     "curtain-down": "^1.0.0",
+    "ganomede-directory": "^0.3.0",
     "ganomede-helpers": "^1.0.5",
     "lodash": "^4.17.2",
     "newrelic": "^1.37.2",

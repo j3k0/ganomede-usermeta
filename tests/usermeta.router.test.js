@@ -1,34 +1,39 @@
 'use strict';
 
-const redis = require('redis');
-const authdb = require('authdb');
-const supertest = require('supertest');
-const ReadWrite = require('../src/fields/ReadWrite');
-const createServer = require('../src/server');
-const usermetaRouter = require('../src/usermeta.router');
-
 describe('usermeta.router', () => {
-  const server = createServer();
+
+  const redis = require('fakeredis');
+  const authdb = require('authdb');
+  const supertest = require('supertest');
+  const ReadWrite = require('../src/fields/ReadWrite');
+  const {createServer} = require('../src/server');
+  const {createRouter} = require('../src/usermeta.router');
+
+  let server;
+  let redisClient;
   const go = () => supertest(server);
-  const redisClient = redis.createClient();
-  const usermeta = usermetaRouter({
-    secret: 'api_secret',
-    authdbClient: authdb.createClient({redisClient}),
-    readWrite: new ReadWrite({
-      redisClient: redisClient,
-      fieldsConfig: {
-        public: ['country', 'no_one_has_this_one'],
-        protected: ['email'],
-        private: ['private-field'],
-        internal: ['key'],
-        maxBytes: 200
-      }
-    })
-  });
 
-  usermeta('', server);
+  beforeEach(done => {
 
-  before(done => redisClient.multi()
+    server = createServer();
+    redisClient = redis.createClient();
+    const usermetaRouter = createRouter({
+      secret: 'api_secret',
+      authdbClient: authdb.createClient({redisClient}),
+      readWrite: new ReadWrite({
+        redisClient: redisClient,
+        fieldsConfig: {
+          public: ['country', 'no_one_has_this_one'],
+          protected: ['email'],
+          private: ['private-field'],
+          internal: ['key'],
+          maxBytes: 200
+        }
+      })
+    });
+    usermetaRouter.addRoutes('', server);
+
+    redisClient.multi()
     .flushdb()
     .mset([
       // tokens
@@ -41,11 +46,11 @@ describe('usermeta.router', () => {
       'bob:country', 'Russia',
       'bob:email', 'bob@example.com'
     ])
-    .exec(done)
-  );
+    .exec(done);
+  });
 
-  after(done => redisClient.flushdb(done));
-  after(done => redisClient.quit(done));
+  afterEach(done => redisClient.flushdb(done));
+  afterEach(done => redisClient.quit(done));
 
   describe('GET /:userIds/:metanames', () => {
     it('works for public fields', (done) => {

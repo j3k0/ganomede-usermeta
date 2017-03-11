@@ -1,20 +1,20 @@
 'use strict';
 
-const supertest = require('supertest');
-const createServer = require('../src/server');
-const about = require('../src/about.router');
-const config = require('../config');
-const pkg = require('../package.json');
-
 describe('about-router', () => {
-  const server = createServer();
 
-  before(done => {
-    about(config.http.prefix, server);
+  const supertest = require('supertest');
+  const pkg = require('../package.json');
+  const config = require('../config');
+  let server;
+
+  beforeEach(done => {
+    server = require('../src/server').createServer();
+    const about = require('../src/about.router');
+    about.addRoutes(config.http.prefix, server);
     server.listen(done);
   });
 
-  after(done => server.close(done));
+  afterEach(done => server.close(done));
 
   const test = (url) => {
     it(`GET ${url}`, (done) => {

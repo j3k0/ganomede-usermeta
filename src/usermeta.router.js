@@ -1,6 +1,6 @@
 'use strict';
 
-const authdb = require('authdb');
+const ganomedeDirectory = require('ganomede-directory');
 const redis = require('redis');
 const {sendHttpError, RequestValidationError} = require('./errors');
 const middlewares = require('./middlewares');
@@ -9,9 +9,9 @@ const {parse} = require('./fields/levels');
 const {hasOwnProperty} = require('./utils');
 const config = require('../config');
 
-module.exports = ({
+const createRouter = ({
   secret = config.secret,
-  authdbClient = authdb.createClient(config.redisAuthdb),
+  authdbClient = ganomedeDirectory.createAuthdbClient(),
   readWrite = new ReadWrite({
     redisClient: redis.createClient(config.redisUsermeta),
     fieldsConfig: config.fields
@@ -65,7 +65,7 @@ module.exports = ({
     });
   };
 
-  return (prefix, server) => {
+  const addRoutes = (prefix, server) => {
     server.get(`${prefix}/:userIds/:metanames`,
       parseLevel, parseCsvParam('userIds'), parseCsvParam('metanames'), readMetas('userIds'));
 
@@ -91,4 +91,7 @@ module.exports = ({
       );
     });
   };
+  return {addRoutes};
 };
+
+module.exports = {createRouter};

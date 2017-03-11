@@ -1,11 +1,12 @@
 'use strict';
 
-const {InvalidCredentialsError} = require('../../src/errors');
-const levels = require('../../src/fields/levels');
-const Rules = require('../../src/fields/Rules');
-const Filter = require('../../src/fields/Filter');
-
 describe('Filter', () => {
+
+  const {InvalidCredentialsError} = require('../../src/errors');
+  const levels = require('../../src/fields/levels');
+  const Rules = require('../../src/fields/Rules');
+  const Filter = require('../../src/fields/Filter');
+
   const rules = new Rules({
     publicKeys: ['public', 'pub01'],
     protectedKeys: ['protected', 'pro01'],

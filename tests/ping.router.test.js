@@ -1,21 +1,23 @@
 'use strict';
 
-const supertest = require('supertest');
-const createServer = require('../src/server');
-const ping = require('../src/ping.router');
-const config = require('../config');
-
 describe('ping-router', () => {
-  const server = createServer();
+
+  const supertest = require('supertest');
+  const config = require('../config');
+
+  let server;
   const go = () => supertest(server);
   const url = `${config.http.prefix}/ping/something`;
 
-  before(done => {
-    ping(config.http.prefix, server);
+  beforeEach(done => {
+    const {createServer} = require('../src/server');
+    const {addRoutes} = require('../src/ping.router');
+    server = createServer();
+    addRoutes(config.http.prefix, server);
     server.listen(done);
   });
 
-  after(done => server.close(done));
+  afterEach(done => server.close(done));
 
   it('GET /ping/:token', (done) => {
     go()

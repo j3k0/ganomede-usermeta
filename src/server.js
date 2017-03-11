@@ -53,7 +53,7 @@ const filteredLogger = (errorsOnly, logger) => (req, res, next) => {
 const requestLogger = filteredLogger(false, (req) =>
   req.log.info({req_id: req.id()}, `${req.method} ${req.url}`));
 
-module.exports = () => {
+const createServer = () => {
   const server = restify.createServer({
     handleUncaughtExceptions: true,
     log: logger
@@ -71,3 +71,5 @@ module.exports = () => {
 
   return server;
 };
+
+module.exports = {createServer};

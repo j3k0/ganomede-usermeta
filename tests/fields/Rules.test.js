@@ -1,9 +1,10 @@
 'use strict';
 
-const Rules = require('../../src/fields/Rules');
-const levels = require('../../src/fields/levels');
-
 describe('Rules', () => {
+
+  const Rules = require('../../src/fields/Rules');
+  const levels = require('../../src/fields/levels');
+
   const rules = new Rules({
     publicKeys: ['public', 'pub01'],
     protectedKeys: ['protected', 'pro01'],

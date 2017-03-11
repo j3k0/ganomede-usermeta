@@ -10,7 +10,7 @@ WORKDIR /home/app/code
 # Install NPM packages
 COPY package.json /home/app/code/package.json
 RUN chown -R app /home/app
-RUN npm install --production
+RUN npm install
 
 # Copy app source files
 COPY index.js config.js newrelic.js .eslintrc /home/app/code/

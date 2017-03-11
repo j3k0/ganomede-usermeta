@@ -10,9 +10,11 @@ const head = (req, res, next) => {
   next();
 };
 
-module.exports = (prefix, server) => {
+const addRoutes = (prefix, server) => {
   const url = `${prefix}/ping/:token`;
 
   server.get(url, get);
   server.head(url, head);
 };
+
+module.exports = {addRoutes};

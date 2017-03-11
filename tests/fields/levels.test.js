@@ -1,8 +1,9 @@
 'use strict';
 
-const levels = require('../../src/fields/levels');
-
 describe('levels', () => {
+
+  const levels = require('../../src/fields/levels');
+
   const parse = levels.parse;
 
   it('public < protected < private < internal', () => {

@@ -17,7 +17,9 @@ const sendAbout = (req, res, next) => {
   next();
 };
 
-module.exports = (prefix, server) => {
+const addRoutes = (prefix, server) => {
   server.get('/about', sendAbout);
   server.get(`${prefix}/about`, sendAbout);
 };
+
+module.exports = {addRoutes};

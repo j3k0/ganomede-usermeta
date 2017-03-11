@@ -1,8 +1,9 @@
 'use strict';
 
-const Db = require('../../src/fields/Db');
-
 describe('Db', () => {
+
+  const Db = require('../../src/fields/Db');
+
   describe('#getKeys()', () => {
     it('calls mget', (done) => {
       const redisClient = td.object(['mget']);

@@ -1,8 +1,9 @@
 'use strict';
 
-const Formatter = require('../../src/fields/Formatter');
-
 describe('Formatter', () => {
+
+  const Formatter = require('../../src/fields/Formatter');
+
   describe('.toKeys()', () => {
     it('converts single userId and single meta', () => {
       expect(Formatter.toKeys('alice', 'country')).to.eql(['alice:country']);
