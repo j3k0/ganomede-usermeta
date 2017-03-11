@@ -3,8 +3,7 @@ services:
 
   sut:
     build: .
-    # command: sh -c "npm run lint && npm t && ./tests/rest_api.sh"
-    command: sh -c "./tests/rest_api.sh"
+    command: sh -c "npm run lint && npm test && ./tests/rest_api.sh"
     volumes:
      - ./src:/home/app/code/src
      - ./tests:/home/app/code/tests
