@@ -44,7 +44,6 @@ services:
     depends_on:
       - directorysync
     environment:
-     - "DIRECTORY_PORT_8000_TCP_ADDR=directory"
      - "COUCH_DIRECTORY_PORT_5984_TCP_ADDR=directorycouch"
      - "REDIS_AUTH_PORT_6379_TCP_ADDR=authredis"
      - "API_SECRET=1234"

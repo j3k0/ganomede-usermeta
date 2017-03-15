@@ -23,6 +23,7 @@ function curl() {
     # testoutput
 }
 
+# json_pp implemented with nodejs
 function json_pp() {
     xargs -0 node -e "console.log(JSON.stringify(JSON.parse(process.argv[1]), null, 2))"
 }
@@ -45,6 +46,22 @@ function it() {
     echo "    - $@"
 }
 
+# Creates a test user with ganomede-directory (call when needed)
+# Ouputs the authentication token.
+#
+# Typical usage:
+#
+# API_SECRET=1234
+# DIRECTORY_URL="${DIRECTORY_PORT_8000_TCP_PROTOCOL:-http}://${DIRECTORY_PORT_8000_TCP_ADDR:-directory}:${DIRECTORY_PORT_8000_TCP_PORT:-8000}"
+#
+# TEST_USER_ID=alice1
+# TEST_PASSWORD=password1234
+# TEST_USERNAME=Alice1
+# TEST_TAG=alicei
+# TEST_EMAIL=alice@email.com
+#
+# AUTH_TOKEN=`initializeTestUser`
+#
 function initializeTestUser() {
     echo "    - [initializing test user]" >&2
     curl $DIRECTORY_URL/directory/v1/users -d '{
