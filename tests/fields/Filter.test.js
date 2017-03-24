@@ -42,4 +42,21 @@ describe('Filter', () => {
         .to.be.true;
     });
   });
+
+  describe('#allWritable()', () => {
+    it('returns true if all fields can be written under level', () => {
+      expect(filter.allWritable(levels.private, ['public', 'pub01'], ['small', 'enough']))
+        .to.be.true;
+    });
+
+    it('returns false if single fields can not be written under level', () => {
+      expect(filter.allWritable(levels.private, ['public', 'internal'], ['small', 'enough']))
+        .to.be.instanceof(InvalidCredentialsError);
+    });
+
+    it('returns first error encountered', () => {
+      expect(filter.allWritable(levels.private, ['public', 'pub01', 'internal'], ['x', 'too-big-of-a-string', 'small']))
+        .to.be.instanceof(Filter.ValueTooBigError);
+    });
+  });
 });

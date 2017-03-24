@@ -104,3 +104,43 @@ In case of writing `public` or `protected` value of byte size greater than `USER
    "message": "Value exceeds ${USERMETA_MAX_LENGTH} byte limit"
  }
 ```
+
+## `POST /auth/:token`
+
+Transactionally write multiple `public` and `protected` meta values of a user `:token` points to. Make `:token` be `"API_SECRET.${userId}"` to write fields up to `internal` and no byte limit.
+
+Unlike getting multiple keys, this will either write all metas, or return an error.
+
+### body (application/json)
+
+Flat JSON object with strings. Keys are metanames.
+
+``` json
+ { "useful_info": "something valuable",
+   "second_key": "second key's value and so on…",
+   "more_keys": "{\"possibly\": true}"
+ }
+```
+
+### response [200] OK
+### response [401] Not Authorzied
+
+In case of invalid token, trying to write `private` and up without `API_SECRET`, or unknown key.
+
+``` json
+ { "restCode": "InvalidCredentialsError",
+   "statusCode": 401,
+   "message": "Invalid credentials"
+ }
+```
+
+### response [413] Payload Too Big
+
+In case of writing `public` or `protected` value of byte size greater than `USERMETA_MAX_LENGTH` env var without `API_SECRET`.
+
+``` json
+ { "restCode": "ValueTooBigError",
+   "statusCode": 413,
+   "message": "Value exceeds ${USERMETA_MAX_LENGTH} byte limit"
+ }
+```

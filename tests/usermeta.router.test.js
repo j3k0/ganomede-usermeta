@@ -109,7 +109,7 @@ describe('usermeta.router', () => {
       go()
         .post('/auth/bob_token/email')
         .send({value: 'new-bob@example.com'})
-        .expect(200)
+        .expect(200, {})
         .end((err, res) => {
           expect(err).to.be.null;
           redisClient.get('bob:email', (err, val) => {
@@ -124,7 +124,7 @@ describe('usermeta.router', () => {
       go()
         .post('/auth/api_secret.bob/key')
         .send({value: 'bob-key'})
-        .expect(200)
+        .expect(200, {})
         .end((err, res) => {
           expect(err).to.be.null;
           redisClient.get('bob:key', (err, val) => {
@@ -148,6 +148,64 @@ describe('usermeta.router', () => {
             done();
           });
         });
+    });
+  });
+
+  describe('POST /auth/:token', () => {
+    it('works with token', (done) => {
+      go()
+        .post('/auth/bob_token')
+        .send({
+          email: 'this',
+          country: 'that'
+        })
+        .expect(200, {})
+        .end((err, res) => {
+          expect(err).to.be.null;
+          redisClient.mget('bob:email', 'bob:country', (err, val) => {
+            expect(err).to.be.null;
+            expect(val).to.eql(['this', 'that']);
+            done();
+          });
+        });
+    });
+
+    it('works with secret', (done) => {
+      go()
+        .post('/auth/api_secret.bob')
+        .send({
+          email: 'xxx',
+          key: 'yyy'
+        })
+        .expect(200, {})
+        .end((err, res) => {
+          expect(err).to.be.null;
+          redisClient.mget('bob:email', 'bob:key', (err, val) => {
+            expect(err).to.be.null;
+            expect(val).to.eql(['xxx', 'yyy']);
+            done();
+          });
+        });
+    });
+
+    it('errors on non-flat objects', (done) => {
+      go()
+        .post('/auth/bob_token')
+        .send({
+          email: 'xxx',
+          strings: {only: ['pretty', 'please']}
+        })
+        .expect(400, /Invalid value/, done);
+    });
+
+    it('errors on single field error', (done) => {
+      go()
+        .post('/auth/bob_token')
+        .send({
+          email: 'xxx',
+          'wierd-uknown-key': 'yyy'
+        })
+        .expect(401, done);
     });
   });
 });
