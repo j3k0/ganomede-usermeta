@@ -40,6 +40,23 @@ class Filter {
 
     return true;
   }
+
+  allWritable (level, keys, values) {
+    let error = null;
+
+    keys.every((key, idx) => {
+      const val = values[idx];
+      const can = this.writable(level, key, val);
+      const fail = can instanceof Error;
+
+      if (fail)
+        error = can;
+
+      return !fail;
+    });
+
+    return error || true;
+  }
 }
 
 Filter.ValueTooBigError = ValueTooBigError;

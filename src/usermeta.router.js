@@ -65,6 +65,9 @@ const createRouter = ({
     });
   };
 
+  const hasBody = (req) => req.body && (typeof req.body === 'object') && (Object.keys(req.body).length > 0);
+  const hasBodyKey = (body, key) => hasOwnProperty(body, key) && (typeof body[key] === 'string');
+
   const addRoutes = (prefix, server) => {
     server.get(`${prefix}/:userIds/:metanames`,
       parseLevel, parseCsvParam('userIds'), parseCsvParam('metanames'), readMetas('userIds'));
@@ -72,8 +75,27 @@ const createRouter = ({
     server.get(`${prefix}/auth/:token/:metanames`,
       requireAuth, parseLevel, parseCsvParam('metanames'), readMetas('userId'));
 
+    server.post(`${prefix}/auth/:token`, requireAuth, parseLevel, (req, res, next) => {
+      const ok = hasBody(req) && Object.keys(req.body).every(key => hasBodyKey(req.body, key));
+      if (!ok)
+        return sendHttpError(next, new RequestValidationError('InvalidValue', 'Invalid value'));
+
+      readWrite.writeMulti(
+        req.ganomede.accessLevel,
+        req.ganomede.userId,
+        req.body,
+        (err) => {
+          if (err)
+            return sendHttpError(next, err);
+
+          res.json({});
+          next();
+        }
+      );
+    });
+
     server.post(`${prefix}/auth/:token/:metaname`, requireAuth, parseLevel, (req, res, next) => {
-      if (!(req.body && hasOwnProperty(req.body, 'value') && (typeof req.body.value === 'string')))
+      if (!(hasBody(req) && hasBodyKey(req.body, 'value')))
         return sendHttpError(next, new RequestValidationError('InvalidValue', 'Invalid value'));
 
       readWrite.write(

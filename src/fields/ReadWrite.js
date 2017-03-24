@@ -1,5 +1,6 @@
 'use strict';
 
+const lodash = require('lodash');
 const Db = require('./Db');
 const Filter = require('./Filter');
 const Formatter = require('./Formatter');
@@ -34,6 +35,20 @@ class ReadWrite {
     this.db.setKeys(
       Formatter.toKeys(userId, metadata),
       [value],
+      callback
+    );
+  }
+
+  writeMulti (level, userId, keyValues, callback) {
+    const metas = Object.keys(keyValues);
+    const values = lodash.values(keyValues);
+    const writable = this.filter.allWritable(level, metas, values);
+    if (writable instanceof Error)
+      return setImmediate(callback, writable);
+
+    this.db.setKeys(
+      Formatter.toKeys(userId, metas),
+      values,
       callback
     );
   }
