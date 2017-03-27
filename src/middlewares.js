@@ -31,8 +31,14 @@ const requireAuth = ({authdbClient, secret = false, paramName = 'token'} = {}) =
 
   authdbClient.getAccount(token, (err, redisResult) => {
     if (err) {
-      logger.error('authdbClient.getAccount("%j") failed', token, err);
-      return sendHttpError(next, new restify.InternalServerError());
+      if (err.body && err.body.code == 'ResourceNotFound') {
+        req.log.info({token}, 'authdbClient account token not found');
+        return sendHttpError(next, new restify.NotAuthorizedError());
+      }
+      else {
+        req.log.error({token, err}, 'authdbClient.getAccount("%j") failed');
+        return sendHttpError(next, new restify.InternalServerError());
+      }
     }
 
     if (!redisResult)
