@@ -1,6 +1,6 @@
 {
   "name": "usermeta",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "private": true,
   "api": "usermeta/v1",
   "description": "usermeta microservice",
