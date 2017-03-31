@@ -3,7 +3,6 @@
 const lodash = require('lodash');
 const restify = require('restify');
 const {InvalidAuthTokenError, InvalidCredentialsError, sendHttpError} = require('./errors');
-const logger = require('./logger');
 
 const requireSecret = (req, res, next) => {
   return req.ganomede.secretMatches
