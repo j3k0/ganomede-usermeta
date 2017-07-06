@@ -42,6 +42,6 @@
     "ganomede-helpers": "^1.0.5",
     "lodash": "^4.17.2",
     "newrelic": "^1.37.2",
-    "restify": "^4.1.1"
+    "restify": "^5.0.0"
   }
 }
