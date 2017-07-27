@@ -65,6 +65,10 @@ const createServer = () => {
   server.use(initReqGanomede);
   server.use(setRequestId);
 
+  // Send audit statistics
+  const sendAuditStats = require('./send-audit-stats');
+  server.on('after', sendAuditStats);
+
   // Audit requests
   server.on('after', filteredLogger(process.env.NODE_ENV === 'production',
     restify.auditLogger({log: logger, body: true})));
