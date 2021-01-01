@@ -16,6 +16,22 @@ const parseUserIdFromSecretToken = (secret, token) => {
     : false;
 };
 
+// Retieve the account from authdb. Retry multiple times in case of a connection problem.
+// Because we've seen this error in prod...
+const retryGetAccount = (authdbClient, token, maxRetries, cb) => {
+  authdbClient.getAccount(token, (err, redisResult) => {
+    if (maxRetries > 0 && err && err.body && err.body.code == 'ECONNRESET') {
+      setTimeout(() => {
+        logger.warn({token, err, maxRetries}, 'authdbClient.getAccount() failed... retrying.');
+        retryGetAccount(authdbClient, token, maxRetries - 1, cb);
+      }, 100); // retry after 100ms
+    }
+    else {
+      cb(err, redisResult);
+    }
+  });
+};
+
 const requireAuth = ({authdbClient, secret = false, paramName = 'token'} = {}) => (req, res, next) => {
   const token = lodash.get(req, `params.${paramName}`);
   if (!token)
@@ -28,7 +44,7 @@ const requireAuth = ({authdbClient, secret = false, paramName = 'token'} = {}) =
     return next();
   }
 
-  authdbClient.getAccount(token, (err, redisResult) => {
+  retryGetAccount(authdbClient, token, 3, (err, redisResult) => {
     if (err) {
       if (err.body && err.body.code == 'ResourceNotFound') {
         req.log.info({token}, 'authdbClient account token not found');
