@@ -1,5 +1,7 @@
 #!/bin/bash
 
+ set -e
+
 BASE_URL="${BASE_URL:-http://localhost:8000}"
 PREFIX="${BASE_URL}/usermeta/v1"
 API_SECRET=${API_SECRET:-1234}

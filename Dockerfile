@@ -1,4 +1,4 @@
-FROM node:6-slim
+FROM node:12-slim
 
 EXPOSE 8000
 MAINTAINER Jean-Christophe Hoelt <hoelt@fovea.cc>
