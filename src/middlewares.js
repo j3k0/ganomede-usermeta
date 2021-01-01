@@ -21,9 +21,9 @@ const parseUserIdFromSecretToken = (secret, token) => {
 // Because we've seen this error in prod...
 const retryGetAccount = (authdbClient, token, maxRetries, cb) => {
   authdbClient.getAccount(token, (err, redisResult) => {
-    if (maxRetries > 0 && err && err.body && err.body.code == 'ECONNRESET') {
+    if (maxRetries > 0 && err && err.code == 'ECONNRESET') {
       setTimeout(() => {
-        logger.warn({token, err, maxRetries}, 'authdbClient.getAccount() failed... retrying.');
+        logger.warn({token, err, maxRetries}, 'authdbClient.getAccount() failed (ECONNRESET)... retrying.');
         retryGetAccount(authdbClient, token, maxRetries - 1, cb);
       }, 100); // retry after 100ms
     }
